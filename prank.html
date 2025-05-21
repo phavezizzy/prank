@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Phone Prank Hack</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Custom styles for a terminal-like appearance */
+      body {
+        font-family: "Inter", monospace; /* Use Inter or a monospace font */
+        background-color: #0d1117; /* Dark background for terminal feel */
+        color: #00ff00; /* Green text for classic hack look */
+        overflow: hidden; /* Hide scrollbars */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px; /* Add some padding */
+        box-sizing: border-box;
+      }
+      .container {
+        width: 100%;
+        max-width: 800px; /* Max width for better readability on large screens */
+        background-color: #161b22; /* Slightly lighter dark background for the console */
+        border: 1px solid #00ff00; /* Green border */
+        border-radius: 8px; /* Rounded corners */
+        box-shadow: 0 0 15px rgba(0, 255, 0, 0.5); /* Green glow effect */
+        padding: 20px;
+        min-height: 500px; /* Minimum height for the console */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+      }
+      .console-output {
+        flex-grow: 1;
+        overflow-y: auto; /* Enable scrolling for output */
+        white-space: pre-wrap; /* Preserve whitespace and wrap text */
+        font-size: 0.9rem;
+        line-height: 1.4;
+        padding-right: 10px; /* Space for scrollbar */
+        scrollbar-width: thin; /* Firefox */
+        scrollbar-color: #00ff00 #161b22; /* Firefox */
+      }
+      /* Webkit scrollbar styling */
+      .console-output::-webkit-scrollbar {
+        width: 8px;
+      }
+      .console-output::-webkit-scrollbar-track {
+        background: #161b22;
+      }
+      .console-output::-webkit-scrollbar-thumb {
+        background-color: #00ff00;
+        border-radius: 4px;
+        border: 2px solid #161b22;
+      }
+      .input-line {
+        display: flex;
+        align-items: center;
+        margin-top: 15px;
+      }
+      .input-line span {
+        color: #00ff00;
+        margin-right: 5px;
+      }
+      .input-line input {
+        background: transparent;
+        border: none;
+        outline: none;
+        color: #00ff00;
+        flex-grow: 1;
+        font-size: 0.9rem;
+      }
+      .prank-message {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #ff0000; /* Red background for "PRANK!" */
+        color: white;
+        padding: 20px 40px;
+        border-radius: 10px;
+        font-size: 2.5rem;
+        font-weight: bold;
+        text-align: center;
+        border: 3px solid white;
+        display: none; /* Hidden by default */
+        z-index: 100; /* Ensure it's on top */
+        animation: pulse 1s infinite alternate; /* Pulsing effect */
+      }
+
+      @keyframes pulse {
+        from {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 1;
+        }
+        to {
+          transform: translate(-50%, -50%) scale(1.05);
+          opacity: 0.9;
+        }
+      }
+
+      .button-container {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+      }
+
+      .action-button {
+        background-color: #00ff00;
+        color: #161b22;
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+        border: 2px solid #00ff00;
+      }
+
+      .action-button:hover {
+        background-color: #00cc00;
+        transform: translateY(-2px);
+      }
+
+      .action-button.stop-button {
+        background-color: #ff0000;
+        border-color: #ff0000;
+        color: white;
+      }
+      .action-button.stop-button:hover {
+        background-color: #cc0000;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 600px) {
+        .container {
+          padding: 15px;
+          min-height: 400px;
+        }
+        .console-output {
+          font-size: 0.8rem;
+        }
+        .prank-message {
+          font-size: 1.8rem;
+          padding: 15px 30px;
+        }
+        .action-button {
+          padding: 8px 15px;
+          font-size: 0.9rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div id="console-output" class="console-output">
+        <p>Initializing fake hack sequence...</p>
+        <p>Establishing secure connection to target device...</p>
+      </div>
+      <div class="input-line">
+        <span>C:\HACKER_TOOL></span>
+        <input type="text" id="command-input" disabled />
+      </div>
+      <div class="button-container">
+        <button id="start-button" class="action-button">Start Prank</button>
+        <button
+          id="stop-button"
+          class="action-button stop-button"
+          style="display: none"
+        >
+          Stop Prank
+        </button>
+      </div>
+      <div id="prank-message" class="prank-message">IT'S A PRANK! 😂</div>
+    </div>
+
+    <script>
+      const consoleOutput = document.getElementById("console-output");
+      const commandInput = document.getElementById("command-input");
+      const startButton = document.getElementById("start-button");
+      const stopButton = document.getElementById("stop-button");
+      const prankMessage = document.getElementById("prank-message");
+      let currentSequence = 0;
+      let animationInterval;
+      let typingTimeout;
+      let isPrankActive = false;
+
+      const sequences = [
+        {
+          text: "Scanning local network for vulnerable devices...",
+          delay: 1000,
+        },
+        {
+          text: "Found device: [192.168.1.X] - 'Friend's Phone'",
+          delay: 1500,
+          type: "slow",
+        },
+        { text: "Attempting SSH brute-force on port 22...", delay: 1000 },
+        {
+          text: "Access denied. Retrying with common exploits...",
+          delay: 1500,
+        },
+        {
+          text: "Exploit 'DirtyCow' successful. Gaining root access...",
+          delay: 2000,
+          type: "slow",
+        },
+        {
+          text: "Root access granted. Establishing persistent backdoor...",
+          delay: 1500,
+        },
+        { text: "Enumerating file system...", delay: 1000 },
+        {
+          text: "Downloading sensitive data: /data/user/0/com.android.chrome/app_webview/Default/Local Storage/...",
+          delay: 2000,
+          type: "data",
+        },
+        { text: "Extracting contacts.db...", delay: 1000 },
+        { text: "Extracting messages.db...", delay: 1000 },
+        { text: "Extracting gallery_metadata.db...", delay: 1000 },
+        {
+          text: "Injecting custom payload: 'rickroll.mp4'...",
+          delay: 1500,
+          type: "progress",
+        },
+        {
+          text: "Payload injection complete. Initiating remote wipe sequence...",
+          delay: 2000,
+        },
+        {
+          text: "WARNING: Device will be wiped in 10 seconds unless stopped.",
+          delay: 1000,
+          color: "red",
+        },
+      ];
+
+      // Function to append text to the console
+      function appendToConsole(text, color = "#00ff00") {
+        const p = document.createElement("p");
+        p.textContent = text;
+        p.style.color = color;
+        consoleOutput.appendChild(p);
+        consoleOutput.scrollTop = consoleOutput.scrollHeight; // Scroll to bottom
+      }
+
+      // Simulate typing effect
+      function typeEffect(text, delayPerChar, callback) {
+        let i = 0;
+        const p = document.createElement("p");
+        consoleOutput.appendChild(p);
+        consoleOutput.scrollTop = consoleOutput.scrollHeight;
+
+        function typeChar() {
+          if (i < text.length) {
+            p.textContent += text.charAt(i);
+            i++;
+            typingTimeout = setTimeout(typeChar, delayPerChar);
+          } else {
+            if (callback) callback();
+          }
+        }
+        typeChar();
+      }
+
+      // Simulate data stream
+      function simulateDataStream(duration, callback) {
+        let startTime = Date.now();
+        const p = document.createElement("p");
+        consoleOutput.appendChild(p);
+        consoleOutput.scrollTop = consoleOutput.scrollHeight;
+
+        animationInterval = setInterval(() => {
+          const randomHex = Math.random()
+            .toString(16)
+            .substring(2, 10)
+            .toUpperCase();
+          const randomFilename = `file_${Math.floor(Math.random() * 9999)}.dat`;
+          const randomSize = (Math.random() * 10).toFixed(2);
+          p.textContent = `[${randomHex}] Downloading: ${randomFilename} (${randomSize} MB)`;
+          if (Date.now() - startTime > duration) {
+            clearInterval(animationInterval);
+            if (callback) callback();
+          }
+        }, 50);
+      }
+
+      // Simulate progress bar
+      function simulateProgressBar(duration, callback) {
+        const p = document.createElement("p");
+        consoleOutput.appendChild(p);
+        consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        let progress = 0;
+        const increment = 100 / (duration / 100); // Calculate increment for 100ms updates
+
+        animationInterval = setInterval(() => {
+          progress += increment;
+          if (progress >= 100) {
+            progress = 100;
+            clearInterval(animationInterval);
+          }
+          const progressBar = `[${"#".repeat(
+            Math.floor(progress / 5)
+          )}${" ".repeat(20 - Math.floor(progress / 5))}] ${progress.toFixed(
+            0
+          )}%`;
+          p.textContent = `Progress: ${progressBar}`;
+          if (progress === 100) {
+            if (callback) callback();
+          }
+        }, 100);
+      }
+
+      // Main hack sequence runner
+      function runSequence() {
+        if (!isPrankActive) return; // Stop if prank is deactivated
+
+        if (currentSequence < sequences.length) {
+          const seq = sequences[currentSequence];
+          if (seq.type === "slow") {
+            typeEffect(seq.text, 50, () => {
+              currentSequence++;
+              setTimeout(runSequence, seq.delay);
+            });
+          } else if (seq.type === "data") {
+            appendToConsole(seq.text);
+            simulateDataStream(seq.delay, () => {
+              currentSequence++;
+              setTimeout(runSequence, 500); // Short delay after data stream
+            });
+          } else if (seq.type === "progress") {
+            appendToConsole(seq.text);
+            simulateProgressBar(seq.delay, () => {
+              currentSequence++;
+              setTimeout(runSequence, 500); // Short delay after progress bar
+            });
+          } else {
+            appendToConsole(seq.text, seq.color);
+            currentSequence++;
+            setTimeout(runSequence, seq.delay);
+          }
+        } else {
+          // Prank reveal
+          revealPrank();
+        }
+      }
+
+      function startPrank() {
+        if (isPrankActive) return; // Prevent multiple starts
+        isPrankActive = true;
+        startButton.style.display = "none";
+        stopButton.style.display = "block";
+        consoleOutput.innerHTML = ""; // Clear initial messages
+        currentSequence = 0;
+        appendToConsole("Starting fake phone hack simulation...");
+        setTimeout(runSequence, 1000); // Initial delay before first sequence
+      }
+
+      function stopPrank() {
+        isPrankActive = false;
+        clearTimeout(typingTimeout);
+        clearInterval(animationInterval);
+        prankMessage.style.display = "none";
+        startButton.style.display = "block";
+        stopButton.style.display = "none";
+        appendToConsole("\n--- Prank Halted ---", "yellow");
+        appendToConsole(
+          "Simulation stopped. No actual data was accessed or modified.",
+          "yellow"
+        );
+        appendToConsole("It's all just for fun!", "yellow");
+      }
+
+      function revealPrank() {
+        isPrankActive = false;
+        clearTimeout(typingTimeout);
+        clearInterval(animationInterval);
+        consoleOutput.innerHTML = ""; // Clear console for the big reveal
+        prankMessage.style.display = "block";
+        stopButton.style.display = "none";
+        startButton.style.display = "block"; // Allow restarting the prank
+      }
+
+      startButton.addEventListener("click", startPrank);
+      stopButton.addEventListener("click", stopPrank);
+
+      // Initial setup for the console
+      window.onload = () => {
+        appendToConsole("Welcome to the 'Totally Real Hacker Terminal' v1.0");
+        appendToConsole("Press 'Start Prank' to begin the simulation.");
+        appendToConsole("Remember, this is just a harmless joke!");
+      };
+    </script>
+  </body>
+</html>
